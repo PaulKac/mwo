@@ -1,0 +1,95 @@
+﻿* Temat realizowanego projektu
+Serwis umożliwiający użytkownikom stworzenie bazy danych po stronie serwera i zapewniający bezpieczny dostęp do niej poprzez API.
+
+* Skład grupy projektowej
+Paweł Kacprzyk, Jakub Kołakowski, Remigiusz Kowal
+
+* Używana technologia
+Backend: Java, Spring
+Baza danych: MongoDB, Querydsl
+Frontend (admin panel): ReactJS
+Security: Keycloak
+
+* Specyfikację wymagań
+Celem projektu jest stworzenie bazy danych do której użytkownicy będą mieli zdalny dostęp. Dostaną oni możliwość dodawania, edycji, usuwania danych - różne uprawnienia w zależności od nadanej, przez administratora danej bazy, rangi.
+Zostanie stworzone API pozwalające na w/w interakcje z systemem oraz jego dokumentacja.
+
+* WBS (Work Breakdown Structure)
+1. Projekt serwisu
+   1. Projektowanie
+      1. Wybór technologii
+      2. Projekt endpointów API
+      3. Projekt struktury zapytań użytkownika
+   1. Programowanie
+      1. Szkielet aplikacji
+      2. Stworzenie warstwy bazodanowej
+      3. Stworzenie podstawowych funkcjonalności API użytkownika
+      4. Stopniowe rozwijanie funkcjonalności API
+      5. Pisanie unit testów na bieżąco
+      6. Stworzenie admin panelu
+      7. Poprawki wydajnościowe
+   1. Testowanie
+      1. Testy integracyjne
+      2. Testy manualne
+
+* Wstępny harmonogram projektu
+1-3 tygodnie - projektowanie
+4-8 tygodnie - programowanie
+9 tydzień - testowanie
+10 tydzień - ostatnie poprawki i oddanie projektu
+
+* Cechy charakterystyczne wybranych technologii
+Spring - potężny framework z wieloma modułami, przetestowany przez społeczność na przestrzeni wielu lat, idealny do wystawiania zabezpieczonego Rest-API
+Querydsl - framework umożliwiający konstruowanie statycznie typowanych query w stylu SQL poprzez rozbudowane, lecz jednocześnie bardzo proste w obsłudze API 
+Keycloak - framework do zarządzania uwierzytelnianiem+autoryzacją poprzez konsole administratora
+MongoDB - system zarządzania bazą danych nie narzucający ściśle zdefiniowanej struktury, trzymający dane jako JSON
+ReactJS - biblioteka dla javascript przechowująca DOM w pamięci, umożliwiająca szybkie tworzenie interfejsów graficznych
+
+* Uzasadnienie, dlaczego dana technologia powinna być użyta w projekcie
+Java - sama kompilacja zapewniająca spore bezpieczeństwo, dużo istniejących narzędzi/frameworków, chęć przetestowania nowej wersji (Java 9 release 21 września 2017)
+Spring - j.w.
+Querydsl - szybkie tworzenie zapytań bez wnikania w szczegóły, poniekąd jeden z celów tego projektu
+Keycloak - znacznie lżejszy niż Spring Security i bardziej sprawdzony niż Apache Shiro
+ReactJS - frontendu będzie dość mało, więc React pasuje bardziej niż kombajny w stylu Angulara
+MongoDB - strukturę tworzonej bazy będzie określał użytkownik, więc Mongo ze swoim elastycznym sposobem przechowywania bardzo pasuje + natywna obsługa JSONa przez Mongo w pewnych miejscach wyeliminuje potrzebę konwersji
+
+* Projekt systemu z przykładowymi diagramami UML
+(pliki png w folderze)
+
+* Wyszczególnienie ryzyk projektowych wraz z ich planami naprawczymi i metodami zapobiegania
+1) Niedostateczne zabezpieczenie danych - wyciek danych klientów na zewnątrz
+Zapobieganie: stosowanie sprawdzonych rozwiązań poprzez wykorzystanie frameworka KeyCloak
+Plan naprawczy: wypuszczanie szybkich fixów naprawczych zaraz po napotkaniu problemu 
+2) Wykonanie prac poniżej poziomu jakościowego wymaganego przez projekt
+Zapobieganie: dotrzymywanie terminów implementacyjnych, komunikacja wewnątrz zespołu,
+zaplanowanie czasu na poprawki i modyfikacje
+3) Niejasne oczekiwania w odniesieniu do produktów projektu
+Zapobieganie: ustalenie wymagań na etapie projektowania, regularna komunikacja z klientem
+4) Niedotrzymanie terminów implementacji
+Zapobieganie: ustalenie harmonogramu pracy, wykonywanie kolejnych mniejszych zadań w określonych terminach
+Plan naprawczy: nadgonienie wcześniejszych terminów poprzez nadgodziny
+5) Zmiany prawne, licencyjne
+Zapobieganie: stosowanie sprawdzonych technologii, znajomość warunków umowy licencyjnej
+Plan naprawczy: dostosowanie się do nowych zmian prawnych, zmiana używanych technologii
+6) Użycie niewłaściwej technologii informatycznej
+Zapobieganie: analiza zapotrzebowania na daną technologię
+Plan naprawczy: znalezienie technologii, która będzie bardziej odpowiednia i jednocześnie nie spowoduje potrzeby ogromnych zmian w projekcie
+7) Brak jasności w kwestii ról i obowiązków w projekcie
+Zapobieganie: podział na iteracje i przypisanie obowiązków członkom zespołu, komunikacja wewnątrzzespołowa, regularne omawianie wykonanych zadań
+Plan naprawczy: narada członków zespołu, gruntowne wyjaśnienie obowiązków
+8) Problemy z dostępnością serwisów e-usług.
+Zapobieganie: zwracanie uwagi czy problem pojawia się w okresie testowym i jeśli tak, jak długo trwają jego skutki
+Plan naprawczy: wybranie alternatywnego dostawcy, możliwość uruchomienia dodatkowych serwerów podczas sytuacji krytycznych 
+9) Utrata kluczowego członka zespołu
+Zapobieganie: dbanie o komunikację i komfort pracowników
+Plan naprawczy: rekrutacja nowego członka zespołu
+
+* Podział prac implementacyjnych na dwie 3-tygodniowe iteracje
+I Iteracja
+1. Szkielet aplikacji
+2. Stworzenie warstwy bazodanowej
+3. Stworzenie podstawowych funkcjonalności API użytkownika
+II Iteracja
+1. Stopniowe rozwijanie funkcjonalności API
+2. Stworzenie admin panelu
+3. Poprawki
