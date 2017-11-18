@@ -31,6 +31,9 @@ public class User {
 
 	private LocalDateTime lastLoginDate;
 
+	private Integer tablesCount;
+
+
 	@JsonCreator
 	public static User fromString(String link) {
 		EntityConverter converter = Main.bean(EntityConverter.class);
