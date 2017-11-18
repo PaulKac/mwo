@@ -3,7 +3,7 @@ package com.mwo.klasterix.api.entities.business;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.mwo.klasterix.api.Main;
 import com.mwo.klasterix.api.converters.EntityConverter;
-import com.shadov.codehellven.restapi.utils.RandomStrings;
+import com.mwo.klasterix.api.utils.RandomStrings;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -30,9 +30,6 @@ public class User {
 	private String password;
 
 	private LocalDateTime lastLoginDate;
-
-	private Integer tablesCount;
-
 
 	@JsonCreator
 	public static User fromString(String link) {

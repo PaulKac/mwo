@@ -3,29 +3,38 @@ package com.mwo.klasterix.api.entities.business;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
 @Builder
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Document
 public class ClientTableInfo {
-    @Id
-    private String clientId;
+	@Id
+	private String infoId;
 
-    @Indexed(unique = true)
-    private String name;
+	@DBRef
+	private User user;
 
-    private String        tableName;
-    private LocalDateTime creationTime;
-    private LocalDateTime lastUpdateTime;
-    private LocalDateTime lastQuerryTime;
-    private Integer       updateCount;
-    private Integer       querryCount;
+	@Indexed(unique = true)
+	private String tableName;
 
+	private List<String> columnNames;
+
+	private LocalDateTime creationTime;
+
+	private LocalDateTime lastUpdateTime;
+
+	private LocalDateTime lastQueryTime;
+
+	private Integer updateCount;
+
+	private Integer queryCount;
 }

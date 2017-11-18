@@ -1,4 +1,4 @@
-package com.shadov.codehellven.restapi;
+package com.mwo.klasterix.api;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,4 +1,4 @@
-package com.shadov.codehellven.restapi.utils;
+package com.mwo.klasterix.api.utils;
 
 import org.apache.commons.text.CharacterPredicate;
 import org.apache.commons.text.RandomStringGenerator;
