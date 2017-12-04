@@ -13,11 +13,15 @@ class Nav extends React.Component {
         return (
             <ul className="nav nav-tabs">
                 <Padded className="nav-item">
-                    <NavLink exact className='nav-link' activeClassName='nav-link active' to='/frontend'>Home</NavLink>
+                    <NavLink exact className='nav-link' activeClassName='nav-link active' to='/frontend/'>Home</NavLink>
                 </Padded>
                 <Padded className="nav-item">
                     <NavLink exact className='nav-link' activeClassName='nav-link active'
                              to='/frontend/profile'>Profile</NavLink>
+                </Padded>
+                <Padded className="nav-item">
+                    <NavLink exact className='nav-link' activeClassName='nav-link active'
+                             to='/frontend/createTable'>Create table</NavLink>
                 </Padded>
             </ul>
         )

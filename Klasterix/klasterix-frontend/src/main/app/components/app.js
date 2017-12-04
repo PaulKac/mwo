@@ -4,6 +4,7 @@ import { Switch, Route } from 'react-router-dom'
 import Nav from './nav';
 import Home from './home';
 import UserPage from './userPage';
+import CreateTable from './createTable';
 import createBrowserHistory from "../config/history";
 
 class App extends React.Component {
@@ -14,8 +15,9 @@ class App extends React.Component {
                     <Nav />
 
                     <Switch>
-                        <Route exact path='/frontend' component={Home} />
+                        <Route exact path='/frontend/' component={Home} />
                         <Route exact path='/frontend/profile' component={UserPage}/>
+                        <Route exact path='/frontend/createTable' component={CreateTable}/>
                     </Switch>
                 </div>
             </Router>
