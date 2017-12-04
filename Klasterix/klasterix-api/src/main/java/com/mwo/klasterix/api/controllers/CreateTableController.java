@@ -2,6 +2,7 @@ package com.mwo.klasterix.api.controllers;
 
 import com.google.common.collect.Sets;
 import com.mwo.klasterix.api.entities.business.ClientTableInfo;
+import com.mwo.klasterix.api.entities.business.Column;
 import com.mwo.klasterix.api.entities.business.User;
 import com.mwo.klasterix.api.repositories.ClientTableInfoRepository;
 import com.mwo.klasterix.api.repositories.UserRepository;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RepositoryRestController
 @RequestMapping("/create")
@@ -35,13 +37,15 @@ public class CreateTableController {
 
 	@PostMapping("/{userName}/{tableName}")
 	@ResponseBody
-	public HttpEntity<String> createTable(@PathVariable String userName, @PathVariable String tableName, @RequestBody List<String> columnNames) {
+	public HttpEntity<String> createTable(@PathVariable String userName, @PathVariable String tableName, @RequestBody List<Column> columns) {
 		User user = userRepository.findByName(userName).orElseThrow(IllegalArgumentException::new);
 
 		List<ClientTableInfo> userTables = clientTableInfoRepository.findByUser(user);
 
 		if (userTables.stream().map(ClientTableInfo::getTableName).anyMatch(item -> item.equals(tableName)))
 			return new ResponseEntity<>("Table with that name already exists!", HttpStatus.BAD_REQUEST);
+
+		List<String> columnNames = columns.stream().map(Column::getColumnName).collect(Collectors.toList());
 
 		if(Sets.newHashSet(columnNames).size() != columnNames.size())
 			return new ResponseEntity<>("Table cannot have duplicated columns!", HttpStatus.BAD_REQUEST);
@@ -50,7 +54,7 @@ public class CreateTableController {
 
 		mongoTemplate.createCollection(tableName);
 
-		ClientTableInfo tableInfo = ClientTableInfo.builder().tableName(tableName).user(user).columnNames(columnNames).build();
+		ClientTableInfo tableInfo = ClientTableInfo.builder().tableName(tableName).user(user).columns(columns).build();
 		clientTableInfoRepository.insert(tableInfo);
 
 		return ResponseEntity.ok("Table " + tableName + " created");

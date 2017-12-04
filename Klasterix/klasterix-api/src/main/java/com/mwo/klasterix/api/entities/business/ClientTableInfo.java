@@ -26,7 +26,8 @@ public class ClientTableInfo {
 	@Indexed(unique = true)
 	private String tableName;
 
-	private List<String> columnNames;
+	@DBRef
+	private List<Column> columns;
 
 	private LocalDateTime creationTime;
 
