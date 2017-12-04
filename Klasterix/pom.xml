@@ -9,5 +9,6 @@
 
 	<modules>
         <module>klasterix-api</module>
+		<module>klasterix-frontend</module>
     </modules>
 </project>
