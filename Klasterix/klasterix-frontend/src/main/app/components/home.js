@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components'
+require('../styles/material.css')
 
 const Title = styled.h1`
 	font-size: 1.5em;
