@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Setter
 @Getter
@@ -24,10 +25,9 @@ public class ClientTableInfo {
 	private User user;
 
 	@Indexed(unique = true)
-	private String tableName;
+	private String collectionName;
 
-	@DBRef
-	private List<Column> columns;
+	private Map<String, ColumnTypes> columns;
 
 	private LocalDateTime creationTime;
 

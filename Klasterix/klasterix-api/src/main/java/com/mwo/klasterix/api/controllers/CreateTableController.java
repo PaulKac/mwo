@@ -1,15 +1,14 @@
 package com.mwo.klasterix.api.controllers;
 
-import com.google.common.collect.Sets;
+import com.mwo.klasterix.api.converters.CollectionNameConverter;
 import com.mwo.klasterix.api.entities.business.ClientTableInfo;
-import com.mwo.klasterix.api.entities.business.Column;
+import com.mwo.klasterix.api.entities.business.ColumnTypes;
 import com.mwo.klasterix.api.entities.business.User;
 import com.mwo.klasterix.api.repositories.ClientTableInfoRepository;
 import com.mwo.klasterix.api.repositories.UserRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpEntity;
@@ -17,11 +16,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @RepositoryRestController
+@CrossOrigin(origins = "http://localhost:8888")
 @RequestMapping("/create")
 public class CreateTableController {
 	private static final Logger LOG = LogManager.getLogger(CreateTableController.class);
@@ -35,26 +34,26 @@ public class CreateTableController {
 	@Autowired
 	private ClientTableInfoRepository clientTableInfoRepository;
 
+	@Autowired
+	private CollectionNameConverter collectionNameConverter;
+
 	@PostMapping("/{userName}/{tableName}")
 	@ResponseBody
-	public HttpEntity<String> createTable(@PathVariable String userName, @PathVariable String tableName, @RequestBody List<Column> columns) {
+	public HttpEntity<String> createTable(@PathVariable String userName, @PathVariable String tableName, @RequestBody Map<String, ColumnTypes> columns) {
 		User user = userRepository.findByName(userName).orElseThrow(IllegalArgumentException::new);
+
+		String collectionName = collectionNameConverter.resolveCollectionName(user, tableName);
 
 		List<ClientTableInfo> userTables = clientTableInfoRepository.findByUser(user);
 
-		if (userTables.stream().map(ClientTableInfo::getTableName).anyMatch(item -> item.equals(tableName)))
-			return new ResponseEntity<>("Table with that name already exists!", HttpStatus.BAD_REQUEST);
+		if (userTables.stream().map(ClientTableInfo::getCollectionName).anyMatch(item -> item.equals(collectionName)))
+			return new ResponseEntity<>("Table with that name already exists!", HttpStatus.ALREADY_REPORTED);
 
-		List<String> columnNames = columns.stream().map(Column::getColumnName).collect(Collectors.toList());
+		LOG.info("Creating table: " + collectionName + " for user: " + userName);
 
-		if(Sets.newHashSet(columnNames).size() != columnNames.size())
-			return new ResponseEntity<>("Table cannot have duplicated columns!", HttpStatus.BAD_REQUEST);
+		mongoTemplate.createCollection(collectionName);
 
-		LOG.info("Creating table: " + tableName + " for user: " + userName);
-
-		mongoTemplate.createCollection(tableName);
-
-		ClientTableInfo tableInfo = ClientTableInfo.builder().tableName(tableName).user(user).columns(columns).build();
+		ClientTableInfo tableInfo = ClientTableInfo.builder().collectionName(collectionName).user(user).columns(columns).build();
 		clientTableInfoRepository.insert(tableInfo);
 
 		return ResponseEntity.ok("Table " + tableName + " created");

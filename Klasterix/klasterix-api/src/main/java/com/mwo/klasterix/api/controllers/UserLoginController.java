@@ -1,6 +1,5 @@
 package com.mwo.klasterix.api.controllers;
 
-
 import com.mwo.klasterix.api.entities.business.User;
 import com.mwo.klasterix.api.repositories.UserRepository;
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RepositoryRestController
+@CrossOrigin(origins = "http://localhost:8888")
 @RequestMapping("/loginToUser")
 public class UserLoginController {
     private static final Logger LOG = LogManager.getLogger(UserLoginController.class);
