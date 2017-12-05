@@ -1,34 +1,45 @@
 package com.mwo.klasterix.api.controllers;
 
+import com.mwo.klasterix.api.encryption.DecryptionService;
 import com.mwo.klasterix.api.entities.business.User;
 import com.mwo.klasterix.api.repositories.UserRepository;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.apache.catalina.connector.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RepositoryRestController
 @CrossOrigin(origins = "http://localhost:8888")
-@RequestMapping("/loginToUser")
+@RequestMapping("/login")
 public class UserLoginController {
-    private static final Logger LOG = LogManager.getLogger(UserLoginController.class);
+	@Autowired
+	private UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private DecryptionService decryptionService;
 
+	@PostMapping
+	@ResponseBody
+	public HttpEntity<String> loginToUser(@RequestBody User user) {
+		String decrypted = StringUtils.EMPTY;
+		try {
+			decrypted = decryptionService.decrypt(user.getPassword());
+		} catch (Exception e) {
+			return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
+		}
 
-    @PostMapping("/{userName}")
-    @ResponseBody
-    public HttpEntity<String> loginToUser(@PathVariable String userName, @RequestBody List<String> loginInfo) {
-        User user = userRepository.findByName(userName).orElseThrow(IllegalArgumentException::new);
+		User userEntity = userRepository.findByName(user.getName()).orElseThrow(IllegalArgumentException::new);
 
-        //TODO ustawienie access tokena dla usera
+		try {
+			if (!decryptionService.authenticate(decrypted, userEntity.getPassword()))
+				return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
+		} catch (Exception e) {
+			return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
+		}
 
-        return ResponseEntity.ok("Access Token for user: " + userName + " created");
-    }
+		return ResponseEntity.ok(userEntity.getUserId());
+	}
 }

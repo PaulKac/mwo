@@ -31,8 +31,6 @@ public class User {
 
 	private LocalDateTime lastLoginDate;
 
-	private String authToken; //TODO pewnie to zmienic na jakas klase
-
 	@JsonCreator
 	public static User fromString(String link) {
 		EntityConverter converter = Main.bean(EntityConverter.class);

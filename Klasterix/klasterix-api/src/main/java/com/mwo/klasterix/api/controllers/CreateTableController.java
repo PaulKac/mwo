@@ -6,6 +6,7 @@ import com.mwo.klasterix.api.entities.business.ColumnTypes;
 import com.mwo.klasterix.api.entities.business.User;
 import com.mwo.klasterix.api.repositories.ClientTableInfoRepository;
 import com.mwo.klasterix.api.repositories.UserRepository;
+import org.apache.catalina.connector.Response;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,11 @@ public class CreateTableController {
 
 	@PostMapping("/{userName}/{tableName}")
 	@ResponseBody
-	public HttpEntity<String> createTable(@PathVariable String userName, @PathVariable String tableName, @RequestBody Map<String, ColumnTypes> columns) {
+	public HttpEntity<String> createTable(@RequestHeader("Authorization") String token, @PathVariable String userName, @PathVariable String tableName, @RequestBody Map<String, ColumnTypes> columns) {
 		User user = userRepository.findByName(userName).orElseThrow(IllegalArgumentException::new);
+
+		if(!user.getUserId().equals(token))
+			return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
 
 		String collectionName = collectionNameConverter.resolveCollectionName(user, tableName);
 
