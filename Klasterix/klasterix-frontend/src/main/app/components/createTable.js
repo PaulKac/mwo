@@ -124,7 +124,6 @@ class CreateTable extends React.Component {
     render() {
         let userTable = this.state.isTableCreated ?
             <UserTable columns={this.state.columns} tableName={this.state.createdTableName}
-                       addColumn={this.handleAddColumn}
                        deleteColumn={this.handleDeleteColumn}/> : '';
 
         let addColumnButton = this.state.isTableCreated ? <AddColumnForm handleNameChange={this.handleColumnNameChange}

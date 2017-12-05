@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components'
 
 import RaisedButton from 'material-ui/RaisedButton';
+
 require('../styles/material.css')
 import loginUtils from '../config/loginUtils';
 import history from '../config/history';
@@ -31,7 +32,7 @@ class Home extends React.Component {
         } else {
             loginStatus = <div><Title>You are, not logged in :(</Title>
                 <div className="button-line"><Title><RaisedButton type="submit" label="Log in" primary
-                                                           onClick={this.goToLogin.bind(this)}/></Title></div>
+                                                                  onClick={this.goToLogin.bind(this)}/></Title></div>
             </div>
         }
 

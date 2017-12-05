@@ -1,6 +1,7 @@
 package com.mwo.klasterix.api.entities.business;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mwo.klasterix.api.Main;
 import com.mwo.klasterix.api.converters.EntityConverter;
 import com.mwo.klasterix.api.utils.RandomStrings;
@@ -27,6 +28,7 @@ public class User {
 	@Indexed(unique = true)
 	private String name;
 
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
 	private LocalDateTime lastLoginDate;
