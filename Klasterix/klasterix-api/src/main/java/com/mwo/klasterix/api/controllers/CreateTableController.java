@@ -1,6 +1,7 @@
 package com.mwo.klasterix.api.controllers;
 
 import com.mwo.klasterix.api.converters.CollectionNameConverter;
+import com.mwo.klasterix.api.encryption.TokenService;
 import com.mwo.klasterix.api.entities.business.ClientTableInfo;
 import com.mwo.klasterix.api.entities.business.ColumnTypes;
 import com.mwo.klasterix.api.entities.business.User;
@@ -38,12 +39,15 @@ public class CreateTableController {
 	@Autowired
 	private CollectionNameConverter collectionNameConverter;
 
+	@Autowired
+	private TokenService tokenService;
+
 	@PostMapping("/{userName}/{tableName}")
 	@ResponseBody
 	public HttpEntity<String> createTable(@RequestHeader("Authorization") String token, @PathVariable String userName, @PathVariable String tableName, @RequestBody Map<String, ColumnTypes> columns) {
 		User user = userRepository.findByName(userName).orElseThrow(IllegalArgumentException::new);
 
-		if(!user.getUserId().equals(token))
+		if(!tokenService.validateToken(token, user))
 			return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
 
 		String collectionName = collectionNameConverter.resolveCollectionName(user, tableName);

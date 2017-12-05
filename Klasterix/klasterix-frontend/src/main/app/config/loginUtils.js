@@ -2,8 +2,9 @@ var CryptoJS = require("crypto-js");
 var secret = "B4C4FA34EFABF21C7F4B6E99D1F7799F";
 
 module.exports = {
-    logIn: function(token) {
+    logIn: function(email, token) {
         this.setToken(token);
+        localStorage.setItem("email", email);
         localStorage.setItem("logged", 'true');
     },
     isLoggedIn: function() {
@@ -26,5 +27,9 @@ module.exports = {
     encryptPassword: function(password) {
         var encrypted = CryptoJS.AES.encrypt(password, secret);
         return encrypted.toString();
+    },
+
+    getCurrentUser : function() {
+        return localStorage.getItem("email");
     }
 };

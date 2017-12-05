@@ -1,12 +1,13 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Card, CardText } from 'material-ui/Card';
+import {Link} from 'react-router-dom';
+import {Card, CardText} from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
 import client from '../config/client';
 import history from '../config/history';
 import {configuration} from "../config/config";
 import loginUtils from "../config/loginUtils";
+import emailValidator from '../config/emailValidation';
 
 class LoginPage extends React.Component {
     constructor(props) {
@@ -29,16 +30,27 @@ class LoginPage extends React.Component {
         user.name = this.state.user.email;
         user.password = loginUtils.encryptPassword(this.state.user.password);
 
+        if(!emailValidator.validateEmail(user.name)) {
+            let errors = {};
+            errors.email = "Wrong email format!";
+            this.setState({errors: errors});
+            return;
+        }
+
         client({
             method: 'POST',
             path: `${configuration.path}/api/login`,
             entity: user
         }).done(response => {
             if (response.status.code === 200) {
-                loginUtils.logIn(response.entity);
+                loginUtils.logIn(this.state.user.email, response.entity);
                 history.push("/frontend/");
-            } else if (response.status.code === 401) {
-                //TODO handle error logging
+            }
+        }, error => {
+            if (error.status.code === 401) {
+                let errors = {};
+                errors.summary = "Wrong combination of email + password";
+                this.setState({errors: errors});
             }
         });
     }

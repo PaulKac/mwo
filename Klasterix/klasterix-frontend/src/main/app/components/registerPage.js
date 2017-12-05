@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { Card, CardText } from 'material-ui/Card';
 import RaisedButton from 'material-ui/RaisedButton';
 import TextField from 'material-ui/TextField';
+import emailValidator from "../config/emailValidation";
 
 
 class RegisterPage extends React.Component {
@@ -42,17 +43,32 @@ class RegisterPage extends React.Component {
         user.name = this.state.user.email;
         user.password = loginUtils.encryptPassword(this.state.user.password);
 
+        if(!emailValidator.validateEmail(user.name)) {
+            let errors = {};
+            errors.email = "Wrong email format!";
+            this.setState({errors: errors});
+            return;
+        }
+
         client({
             method: 'POST',
             path: `${configuration.path}/api/register`,
             entity: user
         }).done(response => {
             if (response.status.code === 200) {
-                loginUtils.logIn(response.entity);
+                loginUtils.logIn(this.state.user.email, response.entity);
                 history.push("/frontend/");
             }
-            //409 name arleady exists
-            //400 zly form
+        }, error => {
+            if (error.status.code === 409) {
+                let errors = {};
+                errors.email = "Account with that email already exists";
+                this.setState({errors: errors})
+            } else if (error.status.code === 400) {
+                let errors = {};
+                errors.summary = "Something wrong with the form";
+                this.setState({errors: errors})
+            }
         });
     }
 

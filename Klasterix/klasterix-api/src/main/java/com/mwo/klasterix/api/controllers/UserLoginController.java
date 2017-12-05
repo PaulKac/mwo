@@ -1,6 +1,7 @@
 package com.mwo.klasterix.api.controllers;
 
 import com.mwo.klasterix.api.encryption.DecryptionService;
+import com.mwo.klasterix.api.encryption.TokenService;
 import com.mwo.klasterix.api.entities.business.User;
 import com.mwo.klasterix.api.repositories.UserRepository;
 import org.apache.catalina.connector.Response;
@@ -10,6 +11,9 @@ import org.springframework.data.rest.webmvc.RepositoryRestController;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
 
 @RepositoryRestController
 @CrossOrigin(origins = "http://localhost:8888")
@@ -21,6 +25,9 @@ public class UserLoginController {
 	@Autowired
 	private DecryptionService decryptionService;
 
+	@Autowired
+	private TokenService tokenService;
+
 	@PostMapping
 	@ResponseBody
 	public HttpEntity<String> loginToUser(@RequestBody User user) {
@@ -31,15 +38,23 @@ public class UserLoginController {
 			return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
 		}
 
-		User userEntity = userRepository.findByName(user.getName()).orElseThrow(IllegalArgumentException::new);
+		Optional<User> userEntity = userRepository.findByName(user.getName());
+
+		if(!userEntity.isPresent())
+			return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
+
+		User foundUser = userEntity.get();
 
 		try {
-			if (!decryptionService.authenticate(decrypted, userEntity.getPassword()))
+			if (!decryptionService.authenticate(decrypted, foundUser.getPassword()))
 				return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
 		} catch (Exception e) {
 			return ResponseEntity.status(Response.SC_UNAUTHORIZED).build();
 		}
 
-		return ResponseEntity.ok(userEntity.getUserId());
+		foundUser.setLastLoginDate(LocalDateTime.now());
+		userRepository.save(foundUser);
+
+		return ResponseEntity.ok(tokenService.generateToken(foundUser.getUserId(), foundUser.getLastLoginDate()));
 	}
 }

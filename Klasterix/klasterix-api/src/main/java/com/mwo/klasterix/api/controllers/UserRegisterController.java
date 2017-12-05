@@ -1,8 +1,10 @@
 package com.mwo.klasterix.api.controllers;
 
 import com.mwo.klasterix.api.encryption.DecryptionService;
+import com.mwo.klasterix.api.encryption.TokenService;
 import com.mwo.klasterix.api.entities.business.User;
 import com.mwo.klasterix.api.repositories.UserRepository;
+import jdk.nashorn.internal.parser.Token;
 import org.apache.catalina.connector.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,9 @@ public class UserRegisterController {
 
 	@Autowired
 	private DecryptionService decryptionService;
+
+	@Autowired
+	private TokenService tokenService;
 
 	@PostMapping
 	@ResponseBody
@@ -46,6 +51,6 @@ public class UserRegisterController {
 		user.setLastLoginDate(LocalDateTime.now());
 		User newUser = userRepository.insert(user);
 
-		return ResponseEntity.ok(newUser.getUserId());
+		return ResponseEntity.ok(tokenService.generateToken(newUser.getUserId(), newUser.getLastLoginDate()));
 	}
 }

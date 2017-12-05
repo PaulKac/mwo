@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import * as FontAwesome from 'react-icons/lib/fa';
 import client from '../config/client'
 import {configuration} from '../config/config';
+import loginUtils from '../config/loginUtils';
+import history from '../config/history';
 
 const PaddedButton = styled.button`
     padding: ${props => props.padding ? props.padding : '10px'};
@@ -34,6 +36,7 @@ class CreateTable extends React.Component {
         this.handleTableNameChange = this.handleTableNameChange.bind(this);
 
         this.handleSendTable = this.handleSendTable.bind(this);
+        this.resetTableCreation = this.resetTableCreation.bind(this);
     }
 
     handleTableCreate(event) {
@@ -85,6 +88,19 @@ class CreateTable extends React.Component {
         this.setState({tempTableName: event.target.value});
     }
 
+    resetTableCreation() {
+        this.setState({
+            columns: [],
+            isTableCreated: false,
+            currentColumnName: '',
+            currentColumnType: '',
+            createdTableName: '',
+            isInvalidColumnName: false,
+            isInvalidTableName: true,
+            isInvalidTypeName: false
+        })
+    }
+
     handleSendTable() {
         var tableCreationRequest = this.state.columns.reduce(function (map, obj) {
             map[obj.name] = obj.type;
@@ -93,15 +109,14 @@ class CreateTable extends React.Component {
 
         client({
             method: 'POST',
-            path: `${configuration.path}/api/create/gWCxg/${this.state.createdTableName}`,
-            entity: tableCreationRequest
+            path: `${configuration.path}/api/create/${loginUtils.getCurrentUser()}/${this.state.createdTableName}`,
+            entity: tableCreationRequest,
+            headers: {Authorization: loginUtils.getToken()}
         }).done(response => {
             if (response.status.code === 200) {
-                //TODO handle ok
+                history.push("/frontend/profile")
             } else if (response.status.code === 208) {
-                //TODO handle table already exists
-            } else {
-                //TODO handle other
+                this.resetTableCreation();
             }
         });
     }
@@ -141,7 +156,7 @@ class AddTableForm extends React.Component {
     render() {
         let nameInputClass = this.props.invalidTableName ? 'form-control is-invalid' : 'form-control';
         let invalidNameWarning = this.props.invalidTableName ?
-            <small className="text-danger">Table name cannot be empty!</small> : '';
+            <small className="text-danger">Invalid table name!</small> : '';
         let disabledSend = this.props.columns === undefined || this.props.columns == 0;
 
         return (
