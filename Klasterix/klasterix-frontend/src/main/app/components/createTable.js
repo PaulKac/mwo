@@ -21,7 +21,8 @@ class CreateTable extends React.Component {
             tempTableName: '',
             createdTableName: '',
             isInvalidColumnName: false,
-            isInvalidTableName: false
+            isInvalidTableName: false,
+            isInvalidTypeName: false
         };
 
         this.handleAddColumn = this.handleAddColumn.bind(this);
@@ -46,6 +47,10 @@ class CreateTable extends React.Component {
 
     handleAddColumn(event) {
         event.preventDefault();
+        if (this.state.currentColumnType === '') {
+            this.setState({isInvalidTypeName: true});
+            return;
+        }
         if (this.state.currentColumnName === '') {
             this.setState({isInvalidColumnName: true});
             return;
@@ -58,7 +63,7 @@ class CreateTable extends React.Component {
         }
         var columnArray = this.state.columns;
         columnArray.push({name: this.state.currentColumnName, type: this.state.currentColumnType});
-        this.setState({columns: columnArray, isInvalidColumnName: false});
+        this.setState({columns: columnArray, isInvalidColumnName: false, isInvalidTypeName: false});
     }
 
     handleDeleteColumn(columnName) {
@@ -111,6 +116,7 @@ class CreateTable extends React.Component {
                                                                          handleTypeChange={this.handleColumnTypeChange}
                                                                          handleAddColumn={this.handleAddColumn}
                                                                          invalidName={this.state.isInvalidColumnName}
+                                                                         invalidType={this.state.isInvalidTypeName}
                                                                          columnName={this.state.currentColumnName}
                                                                          columnType={this.state.currentColumnType}/> : '';
 
@@ -180,6 +186,9 @@ class AddColumnForm extends React.Component {
         let nameInputClass = this.props.invalidName ? 'form-control is-invalid' : 'form-control';
         let invalidNameWarning = this.props.invalidName ?
             <small className="text-danger">Invalid column name!</small> : '';
+        let typeInputClass = this.props.invalidType ? 'form-control form-control-lg is-invalid' : 'form-control form-control-lg';
+        let invalidTypeWarning = this.props.invalidType ?
+            <small className="text-danger">You did not pick!</small> : '';
 
         return (
             <div className="col-xs-2" style={{padding: '20px', margin: '20px'}}>
@@ -200,12 +209,14 @@ class AddColumnForm extends React.Component {
                                     {invalidNameWarning}
                                 </div>
                                 <div className="form-group">
-                                    <select className="form-control form-control-lg"
+                                    <select className={typeInputClass}
                                             onChange={this.props.handleTypeChange}>
+                                        <option value="" selected disabled>Pick column type</option>
                                         <option>String</option>
                                         <option>Number</option>
                                         <option>Date</option>
                                     </select>
+                                    {invalidTypeWarning}
                                 </div>
                                 <div className="form-group">
                                     <PaddedButton type="submit" className="btn btn-warning"
